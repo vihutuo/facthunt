@@ -35,8 +35,7 @@ def IndexView(page:ft.Page, params):
         question_txt.value = question_data["question"]
         answer_textboxes.clear()
 
-        for i in range(answers_count):
-            answer = question_data["answers"][i]
+        for i, answer  in enumerate(question_data["answers"]):
             a = ft.Text(answer, size=22, opacity=0, animate_opacity=700)
             number_circle = ft.Container(
                 content=ft.Text(i + 1, size=18, weight="bold", text_align=ft.TextAlign.CENTER),
@@ -49,7 +48,6 @@ def IndexView(page:ft.Page, params):
             r = ft.Row(controls=[number_circle, a])
             answer_column.controls.append(r)
             answer_textboxes.append(a)
-
 
     question_data = {"question" : "",
                      "answers" : []
