@@ -5,7 +5,7 @@ from views.simple_view import SimpleView
 
 def main(page: ft.Page):
   page.title = "Fact Hunt"
-  page.theme_mode = "light"
+  ##page.theme_mode = "light"
   page.theme = ft.Theme(color_scheme_seed="#FFCD5758")
   page.fonts = {
     "Kanit": "https://raw.githubusercontent.com/google/fonts/master/ofl/kanit/Kanit-Bold.ttf",
