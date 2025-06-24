@@ -1,1 +1,1 @@
-FAct Hunt - Quiz
+Fact Hunt - Quiz
