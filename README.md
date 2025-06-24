@@ -1,1 +1,1 @@
-Fact Hunt - Quiz 2025 Summer Project
+Fact Hunt -  2025 Summer Project
