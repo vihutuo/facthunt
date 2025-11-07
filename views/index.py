@@ -49,26 +49,17 @@ def IndexView(page:ft.Page, params):
             r = ft.Row(controls=[number_circle, a])
             answer_column.controls.append(r)
             answer_textboxes.append(a)
+            page.update()
 
     #main start
-    question_data = {"question" : "",
-                     "answers" : [],
-                     "answers_count": 0
-                     }
+    question_data = { }
 
     question_txt = ft.Text(size=28)
     user_input_box = ft.TextField(label="Type here", on_submit=submit_clicked)
     answer_column = ft.Column()
     answer_textboxes = []
-
-
     appbar = CreateAppBar()
     div = ft.Divider(height=20)
-    print("User session id:", page.session_id)
-
-
-
-    new_round()
     content_column = ft.Column(controls=[question_txt,answer_column,div,user_input_box],
                                width= min([page.width,600]))
     page.views.append(ft.View(
@@ -77,4 +68,5 @@ def IndexView(page:ft.Page, params):
         horizontal_alignment=ft.CrossAxisAlignment.CENTER
     )
     )
+    new_round()
     page.update()
