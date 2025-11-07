@@ -30,8 +30,8 @@ def IndexView(page:ft.Page, params):
     def new_question():
         question_data["question"] = "Name the 5 largest countries"
         question_data["answers"] = ["Russia", "Canada", "China", "USA", "Brazil"]
-        nonlocal  answers_count
-        answers_count = len(question_data["answers"])
+        question_data["answers_count"] = len(question_data["answers"])
+
         question_txt.value = question_data["question"]
         answer_textboxes.clear()
 
@@ -49,10 +49,13 @@ def IndexView(page:ft.Page, params):
             answer_column.controls.append(r)
             answer_textboxes.append(a)
 
+    #main start
     question_data = {"question" : "",
-                     "answers" : []
+                     "answers" : [],
+                     "answers_count": 0
+
                      }
-    answers_count= 0
+
     question_txt = ft.Text(size=28)
     user_input_box = ft.TextField(label="Type here",on_submit=submit_clicked)
     answer_column = ft.Column()
