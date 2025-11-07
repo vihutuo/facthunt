@@ -1,5 +1,6 @@
 import flet as ft
 
+
 def IndexView(page:ft.Page, params):
     def CreateAppBar():
         app_bar = ft.AppBar(
@@ -27,7 +28,7 @@ def IndexView(page:ft.Page, params):
             i = question_data["answers"].index(user_answer)
             answer_textboxes[i].opacity = 1
         page.update()
-    def new_question():
+    def new_round():
         question_data["question"] = "Name the 5 largest countries"
         question_data["answers"] = ["Russia", "Canada", "China", "USA", "Brazil"]
         question_data["answers_count"] = len(question_data["answers"])
@@ -53,18 +54,21 @@ def IndexView(page:ft.Page, params):
     question_data = {"question" : "",
                      "answers" : [],
                      "answers_count": 0
-
                      }
 
     question_txt = ft.Text(size=28)
-    user_input_box = ft.TextField(label="Type here",on_submit=submit_clicked)
+    user_input_box = ft.TextField(label="Type here", on_submit=submit_clicked)
     answer_column = ft.Column()
     answer_textboxes = []
-    new_question()
+
 
     appbar = CreateAppBar()
     div = ft.Divider(height=20)
+    print("User session id:", page.session_id)
 
+
+
+    new_round()
     content_column = ft.Column(controls=[question_txt,answer_column,div,user_input_box],
                                width= min([page.width,600]))
     page.views.append(ft.View(
