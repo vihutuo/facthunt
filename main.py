@@ -5,11 +5,12 @@ from views.simple_view import SimpleView
 
 def main(page: ft.Page):
   page.title = "Fact Hunt"
-  ##page.theme_mode = "light"
-  page.theme = ft.Theme(color_scheme_seed="#FFCD5758")
+  page.theme_mode = "dark"
+  page.theme = ft.Theme(color_scheme_seed="#FF6F00")
   page.fonts = {
     "Kanit": "https://raw.githubusercontent.com/google/fonts/master/ofl/kanit/Kanit-Bold.ttf",
     "playwrite": "fonts/playwrite.ttf",
+    "smoochsans": "fonts/smoochsans.ttf",
   }
 
   def route_change(route):
