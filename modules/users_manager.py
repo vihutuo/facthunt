@@ -53,8 +53,9 @@ class UserManager:
         self._page.pubsub.send_all("UM|users_changed")
 
     # ---------------------------------------------------------
-    def get_user(self, userid):
-        return users.get(userid)
+    def get_user(self, userid = None):
+        actual_id = userid or self._page.session_id
+        return users.get(actual_id)
 
     # ---------------------------------------------------------
     def get_user_count(self):

@@ -7,10 +7,8 @@ from modules import player_name_ctrl
 from modules import mytimer
 from modules import question_manager
 
-ROUND_TIME = 30
+ROUND_TIME = 60
 QM = question_manager.QuestionManager(ROUND_TIME)
-
-
 def IndexView(page:ft.Page, params):
     def page_on_connect(e):
         log.info("Session connect")
@@ -66,12 +64,8 @@ def IndexView(page:ft.Page, params):
         scores_dialog.content = get_high_score_table()
         page.open(scores_dialog)
 
-
-
     def get_high_score_table():
-        # print("Drawinh HS table")
-
-        # print(data)
+        show_all_answers()
         tbl = ft.DataTable(columns=[
 
             ft.DataColumn(ft.Text("Name")),
@@ -81,33 +75,15 @@ def IndexView(page:ft.Page, params):
             column_spacing=50,
             rows=[]
         )
-
-        high_scores = []
-        print(set(QM.question.first_correct))
-        for user_name in set(QM.question.first_correct):
-                print(f"{user_name=}")
-                if user_name is None:
-                    continue
-               # score = UM.get_score_by_username(user_name)
-                try:
-                    score = UM.get_score_by_username(user_name)
-                    print(f"{score=}")
-
-                except Exception as e:
-                       log.warn("username not found " + user_name)
-                else:
-                       high_scores.append([user_name,score])
-
-        print(f"{high_scores=}")
-        high_scores.sort(reverse=True, key=lambda e : e[1])
-
-
-        for  name, score in high_scores:
+        for  uid,s in QM.get_scores():
+               star = ""
+               if uid == UM.get_user().userid :
+                   star = "⭐ "
                tbl.rows.append( ft.DataRow(
                                            cells=[
 
-                                               ft.DataCell(ft.Text(name)),
-                                               ft.DataCell(ft.Text(score)),
+                                               ft.DataCell(ft.Text(star + s.name)),
+                                               ft.DataCell(ft.Text(s.score)),
                                            ]))
 
 
@@ -117,19 +93,29 @@ def IndexView(page:ft.Page, params):
     def player_name_changed(new_name):
        UM.update_user(page.session_id, username=new_name)
        print("Playername updated", player_name_control.player_name)
+    def  show_all_answers():
+        for x in answer_textboxes:
+            x.opacity = 1
+        page.update()
 
     def show_answers():
         all_answers_done = True
         for i in range(len(QM.question.first_correct)):
             if QM.question.first_correct[i] is not None:
-                print("i=", i)
-                print("LEn =", len(answer_textboxes))
+                #print("i=", i)
+                #print("LEn =", len(answer_textboxes))
                 answer_textboxes[i].opacity = 1
-                answer_msg_boxes[i].value = QM.question.first_correct[i]
+                star = ""
+                if UM.get_user().username == QM.question.first_correct[i]:
+                    star = " ⭐"
+
+                answer_msg_boxes[i].value =  QM.question.first_correct[i] + star
             else:
                 all_answers_done = False
         if all_answers_done:
-            main_timer.set_time_remaining(3)
+            main_timer.set_time_remaining(2)
+            QM.end_current_question()
+
             #show_high_scores()
 
 
@@ -140,17 +126,14 @@ def IndexView(page:ft.Page, params):
         if not QM.question:
             return
         user_answer = user_input_box.value
-        idx = QM.submit_answer(player_name_control.player_name,user_answer)
+        user_input_box.focus()
+
+        idx = QM.submit_answer(UM.get_user().userid,UM.get_user().username ,user_answer)
 
         if idx >= 0:
             #answer correct
             user_input_box.value = ""
-            user_input_box.focus()
-            if idx == 0:
-                UM.add_score(page.session_id, 15)
-            else:
-                UM.add_score(page.session_id, 10)
-            score = UM.get_user(page.session_id).score
+            score = QM.get_score(UM.get_user().userid)
             update_score_ui(score)
             page.pubsub.send_all(f"Answer Found|{idx}")
             show_answers()
@@ -164,7 +147,7 @@ def IndexView(page:ft.Page, params):
         log.info("In new round")
         q = QM.get_question()
         scores_dialog.open = False
-        UM.get_user(page.session_id).score = 0
+        #UM.get_user(page.session_id).score = 0
 
         question_txt.value = q.question
         answer_textboxes.clear()
@@ -176,7 +159,7 @@ def IndexView(page:ft.Page, params):
 
         for i, answer  in enumerate(q.answers):
             a = ft.Text(answer, size=22, opacity=0, animate_opacity=700)
-            msg  = ft.Text("", size=16, opacity=1, animate_opacity=700, font_family="smoochsans", color="#00C8FF"  )
+            msg  = ft.Text("", size=18, opacity=1, animate_opacity=700, font_family="smoochsans", color="#00C8FF"  )
             number_circle = ft.Container(
                 content=ft.Text(i + 1, size=18, weight="bold", text_align=ft.TextAlign.CENTER),
                 width=32,
@@ -207,7 +190,7 @@ def IndexView(page:ft.Page, params):
 
     appbar = CreateAppBar()
     div = ft.Divider(height=20)
-    player_name = "Player" + str(random.randrange(1, 1000))
+    player_name = "Player" + str(random.randrange(1, 10000))
     UM = um.UserManager(page)
     UM.add_user(page.session_id, player_name)
 
